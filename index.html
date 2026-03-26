@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buzios Sagrados - Sistema Soberano</title>
+<style>
+  body { 
+    background: #0a0a0a; 
+    margin: 0; 
+    padding: 15px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+    font-family: 'Georgia', serif;
+  }
+  
+  .buzios-container { 
+    max-width: 400px; 
+    width: 100%; 
+    padding: 1.5rem; 
+    text-align: center; 
+    background: #111; 
+    border-radius: 40px; 
+    border: 1px solid #d4af37; 
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.9); 
+    color: #eee; 
+    box-sizing: border-box;
+  }
+  
+  #buzios-board { min-height: 480px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+  /* 1. ESPACIO DE IMAGEN MÍSTICA (PANTALLA INICIAL) */
+  .img-banner-inicial {
+    width: 100%;
+    height: 140px;
+    background-image: url('https://i.ibb.co/nq4vrN6c/133e4f8e594b953bfe90f808b27cb7dd.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 20px;
+    margin: 15px 0;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+  }
+
+  /* 2. TARJETA DE RESULTADO CON FONDO (SEGUNDA PANTALLA) */
+  .resultado-premium {
+    width: 100%;
+    background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://i.ibb.co/nq4vrN6c/133e4f8e594b953bfe90f808b27cb7dd.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 25px;
+    border-radius: 25px;
+    border: 1px solid #d4af37;
+    margin: 15px 0;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  
+  .video-oraculo-circular { width: 130px; height: 130px; border-radius: 50%; border: 3px solid #b8860b; object-fit: cover; filter: drop-shadow(0 0 10px #b8860b); }
+  
+  .shell-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 1rem 0; justify-items: center; }
+  .shell { width: 30px; height: 40px; background-size: contain; background-repeat: no-repeat; }
+  .open { background-image: url('https://img.icons8.com/color/96/000000/shell.png'); filter: brightness(1.2) sepia(0.3); }
+  .closed { background-image: url('https://img.icons8.com/color/96/000000/shell.png'); transform: rotate(180deg) grayscale(1); opacity: 0.2; }
+  
+  .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+  
+  /* ESTILOS DE BOTONES */
+  .btn-tirar { padding: 1.1rem; background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: #000; border: none; border-radius: 50px; font-size: 0.9rem; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .btn-cta-dinamico { 
+    display: none; 
+    text-decoration: none; 
+    padding: 1rem; 
+    background: transparent; 
+    color: #d4af37; 
+    border: 2px solid #d4af37; 
+    border-radius: 50px; 
+    font-size: 0.85rem; 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    transition: 0.3s;
+  }
+  .btn-cta-dinamico:hover { background: rgba(212, 175, 55, 0.1); }
+
+  .odu-nombre { color: #d4af37; font-size: 2.2rem; margin: 5px 0; font-weight: bold; text-shadow: 0 0 10px #000; }
+  .resumen-oro { color: #d4af37; font-weight: bold; border-bottom: 1px solid #d4af37; margin-bottom: 12px; display: block; padding-bottom: 5px; font-size: 0.95rem; }
+  .consejo-texto { font-size: 0.95rem; line-height: 1.5; color: #fff; text-shadow: 1px 1px 2px #000; }
+
+  .footer-soberano { margin-top: 25px; font-size: 0.75rem; color: #666; border-top: 1px solid #222; padding-top: 15px; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<div class="buzios-container">
+  <div id="buzios-board">
+    <img src="https://i.postimg.cc/qRSCZTD9/downloadfile.gif" alt="Buzios Sagrados" class="video-oraculo-circular">
+    
+    <div class="img-banner-inicial" id="placeholderImg"></div>
+    
+    <p style="color: #d4af37; font-style: italic; font-size: 1.1rem;">"La palabra de los Orixas"</p>
+    <p style="font-size: 0.85rem; color: #888;">Concentra tu petición y lanza los caracoles sagrados.</p>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn-tirar" id="btnAccion" onclick="lanzarBuzios()">Lanzar Caracoles</button>
+    
+    <a id="btnCTA" href="#" class="btn-cta-dinamico" target="_blank">CARGANDO...</a>
+  </div>
+
+  <div class="footer-soberano">
+    Desarrollado por <span style="color:#d4af37">portaldigitalofficiall@gmail.com</span><br>
+    <strong>SISTEMA SOBERANO</strong>
+  </div>
+</div>
+
+<script>
+/**
+ * 🔴 CONFIGURACIÓN DE FIRMA Y BOTÓN EDITABLE
+ * Modifica estas líneas para cambiar el comportamiento del botón secundario.
+ */
+const CONFIG_DINAMICA = {
+    cta_texto: "OBTENER MI CARTA NATAL", 
+    cta_enlace: "https://salome-carta-natal.netlify.app/",
+    volver_texto: "VOLVER A LANZAR"
+};
+
+const odus = { 
+  1: { nombre: "OKANA", resumen: "DESCONFIANZA Y HUMILDAD", consejo: "La desconfianza es tu mayor enemigo en este ciclo. Hay energías de traición o malos entendidos flotando cerca de tu círculo cercano. Debes aprender a escuchar más y juzgar menos para no perder tu centro espiritual. Aléjate de las discusiones que no te incumben y cuida tu salud mental." },
+  2: { nombre: "EYIOKO", resumen: "DUALIDAD Y DECISIÓN", consejo: "Te encuentras en una encrucijada donde dos caminos parecen igual de válidos, pero solo uno lleva a la paz. No tomes decisiones basadas en la presión externa o la urgencia del momento, sino en tu estabilidad emocional profunda. Es tiempo de elegir con el corazón y la razón en armonía." },
+  3: { nombre: "OGUNDA", resumen: "CORTE Y JUSTICIA", consejo: "Es momento de usar la espada espiritual para cortar lazos con personas o situaciones que agotan tu energía de forma constante. La justicia de los Orixas te acompaña en este proceso de purga. No temas dejar atrás lo viejo, pues solo así abrirás espacio para que lo nuevo y puro llegue a tu vida." },
+  4: { nombre: "IROSO", resumen: "VISIÓN E INTUICIÓN", consejo: "Mira hacia adelante con firmeza, pero nunca olvides las lecciones que el pasado grabó en tu alma. Estás en un periodo de introspección profunda donde tu intuición será la única luz confiable en momentos de duda. Confía en lo que sientes antes de lo que ves, ahí reside la verdad hoy." },
+  5: { nombre: "OSHE", resumen: "PROSPERIDAD Y GRATITUD", consejo: "La prosperidad está fluyendo hacia ti con fuerza, pero debes mantener la humildad necesaria para no perder la bendición que se te ha otorgado. Tus ancestros están sonriendo ante tus esfuerzos recientes; dedica un momento para agradecerles de forma consciente. La gratitud es la llave de tu abundancia." },
+  6: { nombre: "OBARA", resumen: "HONESTIDAD Y PODER", consejo: "Recuerda siempre que de la mentira nace la verdad. Sé transparente en tus negocios y en tus afectos personales. Si intentas aparentar lo que no eres ante los demás, la corona se te caerá por su propio peso. La honestidad hoy será tu mayor riqueza y el pilar de tu victoria futura." },
+  7: { nombre: "ODI", resumen: "RENACIMIENTO TOTAL", consejo: "Estás viviendo un renacimiento espiritual y material. Todo lo que parecía muerto o estancado comenzará a moverse a una velocidad sorprendente. Es fundamental que limpies tu hogar de objetos rotos o viejos para permitir que la nueva luz entre sin obstáculos. Suelta lo que ya no sirve." },
+  8: { nombre: "EYEUNLE", resumen: "CALMA Y VICTORIA", consejo: "La cabeza rige el cuerpo y el destino. Si tu mente está en caos, tu vida reflejará ese mismo desorden. Busca la calma mental a través del silencio y no permitas que la ira tome el control de tus acciones. La victoria es absolutamente segura si logras mantener la serenidad de un sabio ante la tormenta." },
+  9: { nombre: "OSA", resumen: "CAMBIO Y FLUIDEZ", consejo: "Vientos de cambio espiritual soplan con extrema fuerza sobre tu camino actual. No te resistas a lo inevitable, pues la resistencia solo causa dolor. Lo que se va es porque ya no tiene lugar en tu evolución presente. Abre las ventanas de tu alma y fluye con la marea divina que te lleva a puerto seguro." },
+  10: { nombre: "OFUN", resumen: "BENDICIÓN Y PUREZA", consejo: "La pureza es tu escudo invencible hoy. Vístete de blanco mentalmente y actúa con la máxima transparencia en cada palabra. Las bendiciones que recibas en este ciclo vendrán de lugares totalmente inesperados y de manos puras. Mantén tu fe intacta y observa los milagros cotidianos." },
+  11: { nombre: "OWARIN", resumen: "LIMPIEZA Y AGRADO", consejo: "Cuidado con la ingratitud, tanto la tuya como la de quienes te rodean en el trabajo o la familia. Alguien que ayudaste podría olvidarlo, pero los Orixas ven cada uno de tus actos. Mantén tu casa y tu mente limpias de malas influencias y envidias externas. Protégete con oración y fe." },
+  12: { nombre: "EYILA", resumen: "ESTRATEGIA Y FUEGO", consejo: "La victoria real se logra con estrategia e inteligencia, nunca con violencia o gritos. Tienes el fuego de la justicia de tu lado, pero si no lo controlas con sabiduría, terminarás quemándote a ti mismo. Sé inteligente, observa el tablero de tu vida y espera el momento exacto para dar el paso final." },
+  13: { nombre: "METANLA", resumen: "SANACIÓN Y EVOLUCIÓN", consejo: "Tu alma pide a gritos una transformación profunda. Has pasado por mucho dolor y sacrificio, pero entiende que ese dolor es el abono de tu futura felicidad. Confía plenamente en los procesos de sanación espiritual que estás iniciando hoy. Estás sanando heridas de vidas pasadas." },
+  14: { nombre: "MERINLA", resumen: "ABUNDANCIA Y GENEROSIDAD", consejo: "La abundancia no es solo el dinero en el bolsillo, es tener paz mental y salud vibrante. Comparte lo que tienes, aunque sientas que es poco, y verás cómo el universo te devuelve el doble en bendiciones tangibles. No cierres tu mano ni tu corazón ante quien te pida ayuda honesta hoy." },
+  15: { nombre: "MARUNLA", resumen: "JUSTICIA Y PACIENCIA", consejo: "La justicia divina tarda en manifestarse, pero llega con una precisión absoluta. No intentes tomar la ley por tu propia mano impulsada por la rabia; deja que el equilibrio del universo ponga a cada persona en su lugar. Tu paciencia inquebrantable será recompensada con creces y paz." },
+  16: { nombre: "MERINDILOGUN", resumen: "SABIDURÍA Y PLENITUD", consejo: "Has llegado al final de un ciclo espiritual muy importante. La sintonía con el cosmos y los Orixas es total en este momento. Disfruta de esta paz profunda y prepárate, pues con la gran sabiduría obtenida ahora estás listo para guiar a otros que caminan en la oscuridad." },
+  0: { nombre: "OPIRA", resumen: "PAUSA Y MEDITACIÓN", consejo: "Silencio absoluto es lo que el oráculo pide. Hoy no es un día para actuar, firmar documentos ni hacer más preguntas. Medita profundamente, enciende una luz blanca y espera a que la energía se asiente en tu camino. Mañana será un nuevo día donde el sol brillará con mayor claridad para ti." } 
+};
+
+function lanzarBuzios() {
+  const board = document.getElementById('buzios-board');
+  const btn = document.getElementById('btnAccion');
+  const btnCTA = document.getElementById('btnCTA');
+  
+  // Ocultar elementos para animación
+  btn.disabled = true;
+  btnCTA.style.display = 'none';
+  
+  board.innerHTML = `
+    <img src="https://i.postimg.cc/qRSCZTD9/downloadfile.gif" class="video-oraculo-circular">
+    <p style="color:#d4af37; font-style:italic; margin-top:20px; animation: pulse 1s infinite;">Interpretando los caracoles sagrados...</p>
+  `;
+
+  setTimeout(() => {
+    let abiertos = 0;
+    let htmlShells = '<div class="shell-grid">';
+    for (let i = 0; i < 16; i++) {
+      const isOpen = Math.random() > 0.5;
+      if (isOpen) abiertos++;
+      htmlShells += `<div class="shell ${isOpen ? 'open' : 'closed'}"></div>`;
+    }
+    htmlShells += '</div>';
+
+    const odu = odus[abiertos];
+
+    // Cambio a Pantalla de Resultados
+    board.innerHTML = `
+      <h3 class="odu-nombre">${odu.nombre}</h3>
+      <p style="font-size:0.75rem; color:#d4af37; margin-bottom:5px;">${abiertos} CARACOLES ABIERTOS</p>
+      
+      <div class="resultado-premium">
+        <span class="resumen-oro">${odu.resumen}</span>
+        <div class="consejo-texto">
+          <strong>La palabra de los Orixas:</strong><br>
+          ${odu.consejo}
+        </div>
+      </div>
+      
+      ${htmlShells}
+    `;
+    
+    // Configurar Botones
+    btn.disabled = false;
+    btn.textContent = CONFIG_DINAMICA.volver_texto;
+    
+    btnCTA.textContent = CONFIG_DINAMICA.cta_texto;
+    btnCTA.href = CONFIG_DINAMICA.cta_enlace;
+    btnCTA.style.display = 'block'; 
+
+  }, 2500);
+}
+</script>
+</body>
+</html>
